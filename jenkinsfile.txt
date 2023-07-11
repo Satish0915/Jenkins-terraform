@@ -1,0 +1,42 @@
+pipeline {
+    agent{
+	  node {
+	    label "nodejs_slave"
+	       }
+	
+	}
+     
+    environment {
+       AWS_ACCESS_KEY_ID     = credentials('ACCESS_ID')
+       AWS_SECRET_ACCESS_KEY = credentials('ACCESS_KEY')
+    }
+
+    tools {
+     terraform 'terraform'
+    }
+
+    stages {
+      stage('fetch_latest_code') {
+        steps {
+        git branch: 'main', url: 'https://github.com/Satish0915/Jenkins-terraform.git'
+ }
+      }
+           
+      stage('TF Init&Plan') {
+        steps {
+          sh 'terraform init'
+          sh 'terraform plan'
+          }
+      }
+
+      
+
+      stage('TF Apply') {
+        steps {
+          sh 'terraform apply -auto-approve'
+        }
+        
+      }
+    } 
+  }
+
